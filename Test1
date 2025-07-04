@@ -1,0 +1,176 @@
+-- WelcomeMiniGui
+-- Enhanced for Brighter Blue + Yellow Theme, Smaller Size, Human-Crafted Design
+
+ Players = game:GetService("Players")
+ UserInputService = game:GetService("UserInputService")
+ LocalPlayer = Players.LocalPlayer
+
+-- GUI Initialization
+ gui = Instance.new("ScreenGui")
+gui.Name = "WelcomeMiniGui"
+gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = false -- Respect Roblox topbar boundaries
+
+-- Drag Handler Function
+ function makeDraggable(frame)
+     dragging, dragInput, dragStart, startPos
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+             delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+-- FRAME UTAMA
+ mainFrame = Instance.new("Frame", gui)
+mainFrame.Size = UDim2.new(0, 180, 0, 220) -- Smaller size
+mainFrame.Position = UDim2.new(0.05, 0, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(40, 50, 100) -- Brighter blue base
+mainFrame.Visible = true
+mainFrame.Active = true
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 8)
+ mainStroke = Instance.new("UIStroke", mainFrame)
+mainStroke.Color = Color3.fromRGB(255, 255, 255)
+mainStroke.Thickness = 1.5
+mainStroke.Transparency = 0.8
+makeDraggable(mainFrame)
+
+-- Title
+ title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.new(1, 0, 0, 24)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundColor3 = Color3.fromRGB(160, 140, 60) -- Brighter yellow
+title.Text = "💠 Welcome 💠"
+title.TextColor3 = Color3.fromRGB(220, 220, 240) -- Soft off-white
+title.Font = Enum.Font.GothamSemibold
+title.TextSize = 14
+title.TextScaled = false
+Instance.new("UICorner", title).CornerRadius = UDim.new(0, 6)
+ titleStroke = Instance.new("UIStroke", title)
+titleStroke.Color = Color3.fromRGB(255, 255, 255)
+titleStroke.Thickness = 1
+titleStroke.Transparency = 0.9
+
+-- Gradient for Title
+ titleGradient = Instance.new("UIGradient", title)
+titleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(160, 140, 60)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 100, 40))
+})
+
+-- Scroll Area
+ scroll = Instance.new("ScrollingFrame", mainFrame)
+scroll.Size = UDim2.new(1, -8, 1, -36)
+scroll.Position = UDim2.new(0, 4, 0, 30)
+scroll.BackgroundColor3 = Color3.fromRGB(50, 60, 120) -- Brighter blue
+scroll.ScrollBarThickness = 4
+scroll.ScrollBarImageColor3 = Color3.fromRGB(200, 200, 255)
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.BorderSizePixel = 0
+Instance.new("UICorner", scroll).CornerRadius = UDim.new(0, 6)
+ scrollStroke = Instance.new("UIStroke", scroll)
+scrollStroke.Color = Color3.fromRGB(255, 255, 255)
+scrollStroke.Thickness = 1
+scrollStroke.Transparency = 0.9
+
+ layout = Instance.new("UIListLayout", scroll)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Padding = UDim.new(0, 4)
+
+-- Fungsi Tambah Button
+ function addButton(name, callback)
+     btn = Instance.new("TextButton", scroll)
+    btn.Size = UDim2.new(1, -4, 0, 26)
+    btn.BackgroundColor3 = Color3.fromRGB(70, 90, 150) -- Brighter blue
+    btn.TextColor3 = Color3.fromRGB(220, 220, 240) -- Soft off-white
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 11
+    btn.TextScaled = false
+    btn.Text = name
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+     btnStroke = Instance.new("UIStroke", btn)
+    btnStroke.Color = Color3.fromRGB(255, 255, 255)
+    btnStroke.Thickness = 1
+    btnStroke.Transparency = 0.85
+
+    -- Gradient for Buttons
+     btnGradient = Instance.new("UIGradient", btn)
+    btnGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 90, 150)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 80, 130))
+    })
+
+    btn.MouseButton1Click:Connect(function()
+         success, err = pcall(function()
+            callback()
+        end)
+        if not success then
+            warn("Button callback error for " .. name .. ": " .. tostring(err))
+        end
+    end)
+end
+
+-- OPEN/CLOSE BUTTON
+ toggleBtn = Instance.new("TextButton", gui)
+toggleBtn.Size = UDim2.new(0, 32, 0, 32)
+toggleBtn.Position = UDim2.new(0.02, 0, 0.1, 50) -- Below Roblox topbar
+toggleBtn.BackgroundColor3 = Color3.fromRGB(160, 140, 60) -- Brighter yellow when open
+toggleBtn.Text = "⭕"
+toggleBtn.TextColor3 = Color3.fromRGB(220, 220, 240) -- Soft off-white
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 14
+toggleBtn.TextScaled = false
+Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 6)
+ toggleStroke = Instance.new("UIStroke", toggleBtn)
+toggleStroke.Color = Color3.fromRGB(255, 255, 255)
+toggleStroke.Thickness = 1
+toggleStroke.Transparency = 0.9
+makeDraggable(toggleBtn)
+
+-- Gradient for Toggle Button
+ toggleGradient = Instance.new("UIGradient", toggleBtn)
+toggleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(160, 140, 60)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 100, 40))
+})
+
+-- Toggle logic
+ visible = true
+toggleBtn.MouseButton1Click:Connect(function()
+     success, err = pcall(function()
+        visible = not visible
+        mainFrame.Visible = visible
+        toggleBtn.Text = visible and "⭕" or "❌"
+        toggleBtn.BackgroundColor3 = visible and Color3.fromRGB(160, 140, 60) or Color3.fromRGB(70, 110, 90)
+        toggleGradient.Color = visible and ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(160, 140, 60)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 100, 40))
+        }) or ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 110, 90)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 90, 70))
+        })
+    end)
+    if not success then
+        warn("Toggle button error: " .. tostring(err))
+    end
+end)
