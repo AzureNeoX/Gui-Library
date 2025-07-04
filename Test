@@ -1,0 +1,69 @@
+ Players = game:GetService("Players")
+ player = Players.LocalPlayer
+
+ gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "WelcomeGui"
+gui.ResetOnSpawn = false
+
+-- Frame utama
+ mainFrame = Instance.new("Frame", gui)
+mainFrame.Size = UDim2.new(0, 300, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+Instance.new("UICorner", mainFrame)
+
+-- Title
+ title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "🌟 Welcome 🌟"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextScaled = true
+
+-- Scrollable Container
+ scroll = Instance.new("ScrollingFrame", mainFrame)
+scroll.Size = UDim2.new(1, -20, 1, -60)
+scroll.Position = UDim2.new(0, 10, 0, 50)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 6
+scroll.BackgroundTransparency = 0.2
+scroll.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+scroll.BorderSizePixel = 0
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+-- Layout for buttons
+ layout = Instance.new("UIListLayout", scroll)
+layout.Padding = UDim.new(0, 5)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+----------------------------------------------------
+-- 🧩 Tambahkan Button Secara Dinamis
+ function addButton(name, callback)
+	local button = Instance.new("TextButton", scroll)
+	button.Size = UDim2.new(1, 0, 0, 40)
+	button.Text = name
+	button.BackgroundColor3 = Color3.fromRGB(50, 100, 200)
+	button.TextColor3 = Color3.new(1,1,1)
+	button.Font = Enum.Font.GothamBold
+	button.TextScaled = true
+	Instance.new("UICorner", button)
+
+	button.MouseButton1Click:Connect(function()
+		callback()
+	end)
+end
+
+----------------------------------------------------
+-- Tambahkan Contoh Button
+addButton("Say Hello", function()
+	print("Hello from Welcome GUI!")
+end)
+
+addButton("Teleport Spawn", function()
+	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if hrp then
+		hrp.CFrame = CFrame.new(Vector3.new(0, 10, 0))
+	end
+end)
