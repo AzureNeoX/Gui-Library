@@ -53,17 +53,12 @@ layout.Padding = UDim.new(0, 4)
 	btn.MouseButton1Click:Connect(callback)
 end
 
--- Example Buttons
-addButton("Say Hello", function()
-	print("Hello from Mini GUI!")
-end)
-
 -- Open/Close Toggle Button
  toggleBtn = Instance.new("TextButton", gui)
-toggleBtn.Size = UDim2.new(0, 28, 0, 28)
+toggleBtn.Size = UDim2.new(0, 40, 0, 40)
 toggleBtn.Position = UDim2.new(0.015, 0, 0.37, 0)
 toggleBtn.BackgroundColor3 = Color3.fromRGB(65, 110, 180)
-toggleBtn.Text = "🟩"
+toggleBtn.Text = "⭐"
 toggleBtn.TextColor3 = Color3.fromRGB(255, 230, 100)
 toggleBtn.Font = Enum.Font.GothamBold
 toggleBtn.TextScaled = true
