@@ -130,6 +130,10 @@ layout.Padding = UDim.new(0, 4)
     end)
 end
 
+addButton("Say Hello", function()
+	print("Hello from Welcome GUI!")
+end)
+
 -- OPEN/CLOSE BUTTON
  toggleBtn = Instance.new("TextButton", gui)
 toggleBtn.Size = UDim2.new(0, 32, 0, 32)
