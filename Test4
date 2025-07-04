@@ -1,71 +1,135 @@
  Players = game:GetService("Players")
- LocalPlayer = Players.LocalPlayer
+ player = Players.LocalPlayer
 
--- GUI
- gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-gui.Name = "WelcomeMiniGUI"
-gui.ResetOnSpawn = false
+-- Create ScreenGui
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "WelcomeMiniGui"
+gui.IgnoreGuiInset = true
 
--- Main Frame
- mainFrame = Instance.new("Frame", gui)
-mainFrame.Size = UDim2.new(0, 180, 0, 220)
-mainFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-mainFrame.Visible = true
-mainFrame.Active = true
-mainFrame.Draggable = true
-Instance.new("UICorner", mainFrame)
+-- Main frame (smaller size)
+ frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 180, 0, 140)
+frame.Position = UDim2.new(0, 20, 0.5, -70)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+frame.BorderSizePixel = 0
+frame.Visible = false
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(0, 120, 255)
+
+-- Open/Close button (floating, draggable)
+ toggleBtn = Instance.new("TextButton", gui)
+toggleBtn.Size = UDim2.new(0, 40, 0, 40)
+toggleBtn.Position = UDim2.new(0, 10, 0.5, -20)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+toggleBtn.Text = "+"
+toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextScaled = true
+Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 20)
+Instance.new("UIStroke", toggleBtn).Color = Color3.fromRGB(255, 255, 255)
 
 -- Title
- title = Instance.new("TextLabel", mainFrame)
+ title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 25)
-title.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-title.Text = "💠 Welcome 💠"
-title.TextColor3 = Color3.fromRGB(255, 221, 85)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "👋 Welcome"
+title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
 title.TextScaled = true
 
--- Scroll Frame
- scroll = Instance.new("ScrollingFrame", mainFrame)
-scroll.Size = UDim2.new(1, -10, 1, -35)
-scroll.Position = UDim2.new(0, 5, 0, 30)
-scroll.BackgroundColor3 = Color3.fromRGB(38, 38, 50)
-scroll.ScrollBarThickness = 5
-scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+-- Scrolling area
+ scroll = Instance.new("ScrollingFrame", frame)
+scroll.Position = UDim2.new(0, 8, 0, 30)
+scroll.Size = UDim2.new(1, -16, 1, -40)
 scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 4
+scroll.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 scroll.BorderSizePixel = 0
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
 
  layout = Instance.new("UIListLayout", scroll)
-layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Padding = UDim.new(0, 4)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- Add Button Function
- function addButton(name, callback)
-	 btn = Instance.new("TextButton", scroll)
-	btn.Size = UDim2.new(1, 0, 0, 26)
-	btn.BackgroundColor3 = Color3.fromRGB(65, 110, 180)
-	btn.TextColor3 = Color3.fromRGB(255, 230, 100)
-	btn.Font = Enum.Font.GothamBold
-	btn.TextScaled = true
-	btn.Text = name
-	Instance.new("UICorner", btn)
-
-	btn.MouseButton1Click:Connect(callback)
+-- Function to add buttons
+ function addButton(text, callback)
+    local btn = Instance.new("TextButton", scroll)
+    btn.Size = UDim2.new(1, 0, 0, 25)
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextScaled = true
+    Instance.new("UICorner", btn)
+    if callback then btn.MouseButton1Click:Connect(callback) end
 end
 
--- Open/Close Toggle Button
- toggleBtn = Instance.new("TextButton", gui)
-toggleBtn.Size = UDim2.new(0, 40, 0, 40)
-toggleBtn.Position = UDim2.new(0.015, 0, 0.37, 0)
-toggleBtn.BackgroundColor3 = Color3.fromRGB(65, 110, 180)
-toggleBtn.Text = "⭐"
-toggleBtn.TextColor3 = Color3.fromRGB(255, 230, 100)
-toggleBtn.Font = Enum.Font.GothamBold
-toggleBtn.TextScaled = true
-Instance.new("UICorner", toggleBtn)
+-- Drag functionality for main frame
+ frameDragging = false
+ frameDragStart = nil
+ frameStartPos = nil
 
- visible = true
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        frameDragging = true
+        frameDragStart = input.Position
+        frameStartPos = frame.Position
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if frameDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - frameDragStart
+        frame.Position = UDim2.new(
+            frameStartPos.X.Scale,
+            frameStartPos.X.Offset + delta.X,
+            frameStartPos.Y.Scale,
+            frameStartPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+frame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        frameDragging = false
+    end
+end)
+
+-- Drag functionality for toggle button
+ toggleDragging = false
+ toggleDragStart = nil
+ toggleStartPos = nil
+
+toggleBtn.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        toggleDragging = true
+        toggleDragStart = input.Position
+        toggleStartPos = toggleBtn.Position
+    end
+end)
+
+toggleBtn.InputChanged:Connect(function(input)
+    if toggleDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+         delta = input.Position - toggleDragStart
+        toggleBtn.Position = UDim2.new(
+            toggleStartPos.X.Scale,
+            toggleStartPos.X.Offset + delta.X,
+            toggleStartPos.Y.Scale,
+            toggleStartPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+toggleBtn.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        toggleDragging = false
+    end
+end)
+
+-- Toggle GUI visibility
 toggleBtn.MouseButton1Click:Connect(function()
-	visible = not visible
-	mainFrame.Visible = visible
+    frame.Visible = not frame.Visible
+    toggleBtn.Text = frame.Visible and "−" or "+"
 end)
