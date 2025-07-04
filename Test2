@@ -1,16 +1,22 @@
--- WelcomeMiniGui
--- Enhanced for Brighter Blue + Yellow Theme, Smaller Size, Human-Crafted Design
+-- Validate game environment
+if not game then
+    warn("Error: 'game' is nil. Script cannot run.")
+    return
+end
 
- Players = game:GetService("Players")
- UserInputService = game:GetService("UserInputService")
- LocalPlayer = Players.LocalPlayer
+-- Initialize services with error checking
+ Players = game:GetService("Players") or error("Failed to get Players service")
+ UserInputService = game:GetService("UserInputService") or error("Failed to get UserInputService")
+ LocalPlayer = Players.LocalPlayer or error("LocalPlayer not found")
+ PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 5) or error("PlayerGui not found")
 
 -- GUI Initialization
  gui = Instance.new("ScreenGui")
 gui.Name = "WelcomeMiniGui"
-gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+gui.Parent = PlayerGui
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = false -- Respect Roblox topbar boundaries
+warn("GUI initialized successfully")
 
 -- Drag Handler Function
  function makeDraggable(frame)
@@ -53,6 +59,7 @@ mainStroke.Color = Color3.fromRGB(255, 255, 255)
 mainStroke.Thickness = 1.5
 mainStroke.Transparency = 0.8
 makeDraggable(mainFrame)
+warn("Main frame initialized")
 
 -- Title
  title = Instance.new("TextLabel", mainFrame)
@@ -76,6 +83,7 @@ titleGradient.Color = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color3.fromRGB(160, 140, 60)),
     ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 100, 40))
 })
+warn("Title initialized")
 
 -- Scroll Area
  scroll = Instance.new("ScrollingFrame", mainFrame)
@@ -96,6 +104,7 @@ scrollStroke.Transparency = 0.9
  layout = Instance.new("UIListLayout", scroll)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Padding = UDim.new(0, 4)
+warn("Scroll frame initialized")
 
 -- Fungsi Tambah Button
  function addButton(name, callback)
@@ -128,10 +137,12 @@ layout.Padding = UDim.new(0, 4)
             warn("Button callback error for " .. name .. ": " .. tostring(err))
         end
     end)
+    warn("Button added: " .. name)
 end
 
+-- Contoh Tombol
 addButton("Say Hello", function()
-	print("Hello from Welcome GUI!")
+    print("Hello from Welcome GUI!")
 end)
 
 -- OPEN/CLOSE BUTTON
@@ -178,3 +189,4 @@ toggleBtn.MouseButton1Click:Connect(function()
         warn("Toggle button error: " .. tostring(err))
     end
 end)
+warn("Toggle button initialized")
